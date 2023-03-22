@@ -1,0 +1,128 @@
+service: ngr-multi-marca-api
+
+plugins:
+  - serverless-domain-manager
+  - serverless-pseudo-parameters
+  #- serverless-plugin-log-retention
+
+custom:
+  myStage: ${opt:stage, self:provider.stage}
+  domains:
+    dev: devmm.api-ngr.com
+    qa: devmm.api-ngr.com
+    prod: api-ngr.com
+  multiMarcaScope:
+    dev:
+      - "https://dev.api-ngr.com/multi-marca"
+    qa:
+      - "https://dev.api-ngr.com/multi-marca"
+    prod:
+      - "https://dev.api-ngr.com/multi-marca"
+  securitygroups:
+    dev:
+      - sg-0e304d79467381763
+    qa:
+      - sg-0e304d79467381763
+    prod:
+      - sg-013b18d356c85d39b
+  subnets:
+    dev:
+      - subnet-0e659fe355a990d68
+      - subnet-08dd0b487d47d6eb3
+      - subnet-098b84764b5a9ae91
+      - subnet-04c21052b5d9f1dba
+      - subnet-005aaecf8362c2e8d
+    qa:
+      - subnet-0e659fe355a990d68
+      - subnet-08dd0b487d47d6eb3
+      - subnet-098b84764b5a9ae91
+      - subnet-04c21052b5d9f1dba
+      - subnet-005aaecf8362c2e8d
+    prod:
+      - subnet-004749d13686ea6e9
+      - subnet-044da0f931dc62eb6
+      - subnet-0b18d2566107b7a38
+      - subnet-091667b856bb4a8d7
+      - subnet-0b6e0f07b030093bd
+  customDomain:
+    basePath: multi-marca
+    domainName: ${self:custom.domains.${self:custom.myStage}}
+    stage: "${self:custom.myStage}"
+    createRoute53Record: true
+  settings:
+    dev:
+      TABLE_DYNAMO: clients-multimarca
+      USER_POOL: us-east-1_Dy4zSGFLg
+      REGION: ${self:provider.region}
+      ACCOUND_ID: "#{AWS::AccountId}"
+    qa:
+      TABLE_DYNAMO: clients-multimarca
+      USER_POOL: us-east-1_Dy4zSGFLg
+      REGION: ${self:provider.region}
+      ACCOUND_ID: "#{AWS::AccountId}"
+    prod:
+      TABLE_DYNAMO: clients-multimarca
+      USER_POOL: us-east-1_Dy4zSGFLg
+      REGION: ${self:provider.region}
+      ACCOUND_ID: "#{AWS::AccountId}"
+provider:
+  name: aws
+  runtime: nodejs14.x
+  profile: ngr-dev  
+  region: us-east-1
+  enableAPIGLogs: true
+  tracing:
+    apiGateway: true
+    lambda: true
+  logRetentionInDays: 14
+  environment: ${self:custom.settings.${self:custom.myStage}}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:GetItem"        
+        - "dynamodb:Scan"
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.TABLE_DYNAMO}"
+
+  vpc:
+    securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}}
+    subnetIds: ${self:custom.subnets.${self:custom.myStage}}
+functions:  
+  getFilterDateClientHandler:
+    handler: handlers/search-client-date.handler
+    timeout: 25
+    events:
+      - http:
+          path: /search-client-date
+          method: get
+          cors:
+            origin: "*"          
+    logRetentionInDays: 14
+
+  authNgrHandler:
+    handler: handlers/authNgr.handler
+    timeout: 16
+    events:
+      - http:
+          path: /auth-ngr
+          method: get
+          cors:
+            origin: "*"          
+    logRetentionInDays: 14
+
+  createClientsHandler:
+    handler: handlers/create-clients.handler
+    timeout: 25
+    events:
+      - http:
+          path: /create-client
+          method: post
+          cors:
+            origin: "*"
+          #authorizer:
+          #  name: authorizer
+          #  arn: "arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:userpool/${self:custom.settings.${self:custom.myStage}.USER_POOL}"
+          # scopes: ${self:custom.multiMarcaScope.${self:custom.myStage}}
+    logRetentionInDays: 14
