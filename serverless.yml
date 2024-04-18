@@ -1,75 +1,123 @@
-service: ngr-multi-marca-api
-
+service: sls-fmwk-api-lambda-node-clienteunico
 plugins:
   - serverless-domain-manager
   - serverless-pseudo-parameters
   #- serverless-plugin-log-retention
-
 custom:
   myStage: ${opt:stage, self:provider.stage}
   domains:
-    dev: devmm.api-ngr.com
-    qa: devmm.api-ngr.com
-    prod: api-ngr.com
-  multiMarcaScope:
-    dev:
-      - "https://dev.api-ngr.com/multi-marca"
-    qa:
-      - "https://dev.api-ngr.com/multi-marca"
-    prod:
-      - "https://dev.api-ngr.com/multi-marca"
+    dev: api.dev.amauta.api-ngr.com
+    qa: api.dev-qa.amauta.api-ngr.com
+    prod: api.amauta.api-ngr.com
   securitygroups:
     dev:
-      - sg-0e304d79467381763
+      us-east-1: # virginia
+        - sg-0df82d04ab647cec6
+      us-west-2: # oregon
+        - sg-0f46b6fce678e1d33
     qa:
-      - sg-0e304d79467381763
+      us-east-1: # virginia
+        - sg-0df82d04ab647cec6
+      us-west-2: # oregon
+        - sg-0f46b6fce678e1d33
     prod:
-      - sg-013b18d356c85d39b
+      us-east-1: # virginia
+        - sg-0da542fae4d132418
+      us-west-2: # oregon
+        - sg-031454b437717675e
   subnets:
     dev:
-      - subnet-0e659fe355a990d68
-      - subnet-08dd0b487d47d6eb3
-      - subnet-098b84764b5a9ae91
-      - subnet-04c21052b5d9f1dba
-      - subnet-005aaecf8362c2e8d
+      us-east-1: # virginia
+        - subnet-05fa503797db6ddbd
+        - subnet-04121d97b4403661d
+        - subnet-05706b8dce88e794d
+        - subnet-0992bf8b0653731c2
+      us-west-2: # oregon
+        - subnet-03fba865cbd934b92
+        - subnet-04a809ebde67f1bc4
+        - subnet-056d0fe689ba24e86
+        - subnet-054f6e4cd193e2c1c
     qa:
-      - subnet-0e659fe355a990d68
-      - subnet-08dd0b487d47d6eb3
-      - subnet-098b84764b5a9ae91
-      - subnet-04c21052b5d9f1dba
-      - subnet-005aaecf8362c2e8d
+      us-east-1: # virginia
+        - subnet-05fa503797db6ddbd
+        - subnet-04121d97b4403661d
+        - subnet-05706b8dce88e794d
+        - subnet-0992bf8b0653731c2
+      us-west-2: # oregon
+        - subnet-03fba865cbd934b92
+        - subnet-04a809ebde67f1bc4
+        - subnet-056d0fe689ba24e86
+        - subnet-054f6e4cd193e2c1c
     prod:
-      - subnet-004749d13686ea6e9
-      - subnet-044da0f931dc62eb6
-      - subnet-0b18d2566107b7a38
-      - subnet-091667b856bb4a8d7
-      - subnet-0b6e0f07b030093bd
+      us-east-1: # virginia
+        - subnet-03af16f575ff0a1d8
+        - subnet-03979aafff38480e7
+        - subnet-0ae717cb262822206
+        - subnet-09d5ecd7d1c8269e2
+      us-west-2: # oregon
+        - subnet-0f23c0e6e6c857978
+        - subnet-0dd16d01daf96151a
+        - subnet-0081b5e73dac08f9d
+        - subnet-0fd4409cc2291e1ff
   customDomain:
-    basePath: multi-marca
+    basePath: clienteunico
+    endPointType: 'regional'
     domainName: ${self:custom.domains.${self:custom.myStage}}
     stage: "${self:custom.myStage}"
     createRoute53Record: true
   settings:
     dev:
-      TABLE_DYNAMO: clients-multimarca
-      USER_POOL: us-east-1_Dy4zSGFLg
-      REGION: ${self:provider.region}
       ACCOUND_ID: "#{AWS::AccountId}"
+      REGION: ${self:provider.region}
+      AWS_TABLE: ngr-001-devcliu-table-clienteunico
+      AWS_TABLE_CLIENTE: scr-amauta-table-cliente
+      AWS_TABLE_AUTORIZACION: scr-002-amauta-table-autorizacion-historial
+      QUEUE_NAME: ngr-002-devcliu-queue-clienteunico
+      QUEUE_NAME_CLIENTE_CSV : ngr-002-devclienteunicocsv-queue-amauta
+      S3_NAME: ngr-001-devcliu-clienteunico
+      S3_NAME_VIRGINIA: ngr-001-devcliu-clienteunico-us-east-1
+      S3_NAME_OREGON: ngr-001-devcliu-clienteunico-us-west-2
+      S3_NAME_CLIENTE_UNICO_CSV: generacioncsvcliente-amauta
+      S3_NAME_CLIENTE_UNICO_CSV_VIRGINIA: generacioncsvcliente-amauta-us-east-1
+      S3_NAME_CLIENTE_UNICO_CSV_OREGON: generacioncsvcliente-amauta-us-west-2
+      LAMBDA_REQUEST_VALIDATOR: oauth2-qadrp-lambdaAuthorizer
+      LAMBDA_REQUEST_VALIDATOR_RESULT_TTL: 0
     qa:
-      TABLE_DYNAMO: clients-multimarca
-      USER_POOL: us-east-1_Dy4zSGFLg
-      REGION: ${self:provider.region}
       ACCOUND_ID: "#{AWS::AccountId}"
+      REGION: ${self:provider.region}
+      AWS_TABLE: ngr-001-qacliu-table-clienteunico
+      AWS_TABLE_CLIENTE: scr-amauta-table-cliente
+      AWS_TABLE_AUTORIZACION: scr-002-amauta-table-autorizacion-historial
+      QUEUE_NAME: ngr-001-qacliu-queue-clienteunico
+      QUEUE_NAME_CLIENTE_CSV : ngr-002-qaclienteunicocsv-queue-amauta
+      S3_NAME: ngr-001-qacliu-clienteunico
+      S3_NAME_VIRGINIA: ngr-001-qacliu-clienteunico-us-east-1
+      S3_NAME_OREGON: ngr-001-qacliu-clienteunico-us-west-2
+      S3_NAME_CLIENTE_UNICO_CSV: generacioncsvcliente-amauta
+      S3_NAME_CLIENTE_UNICO_CSV_VIRGINIA: generacioncsvcliente-amauta-us-east-1
+      S3_NAME_CLIENTE_UNICO_CSV_OREGON: generacioncsvcliente-amauta-us-west-2
+      LAMBDA_REQUEST_VALIDATOR: oauth2-qadrp-lambdaAuthorizer
+      LAMBDA_REQUEST_VALIDATOR_RESULT_TTL: 0
     prod:
-      TABLE_DYNAMO: clients-multimarca
-      USER_POOL: us-east-1_Dy4zSGFLg
-      REGION: ${self:provider.region}
       ACCOUND_ID: "#{AWS::AccountId}"
+      REGION: ${self:provider.region}
+      AWS_TABLE: ngr-001-prodcliu-table-clienteunico
+      AWS_TABLE_CLIENTE: scr-amauta-table-cliente
+      AWS_TABLE_AUTORIZACION: scr-002-amauta-table-autorizacion-historial
+      QUEUE_NAME: ngr-001-prodcliu-queue-clienteunico
+      QUEUE_NAME_CLIENTE_CSV : ngr-002-prdclienteunicocsv-queue-amauta
+      S3_NAME: ngr-001-prodcliu-clienteunico
+      S3_NAME_VIRGINIA: ngr-001-prodcliu-clienteunico-us-east-1
+      S3_NAME_OREGON: ngr-001-prodcliu-clienteunico-us-west-2
+      S3_NAME_CLIENTE_UNICO_CSV: generacioncsvcliente-amauta-prd
+      S3_NAME_CLIENTE_UNICO_CSV_VIRGINIA: generacioncsvcliente-amauta-prd-us-east-1
+      S3_NAME_CLIENTE_UNICO_CSV_OREGON: generacioncsvcliente-amauta-prd-us-west-2
+      LAMBDA_REQUEST_VALIDATOR: oauth2-proddrp-lambdaAuthorizer
+      LAMBDA_REQUEST_VALIDATOR_RESULT_TTL: 0
 provider:
   name: aws
-  runtime: nodejs14.x
-  profile: ngr-dev  
-  region: us-east-1
+  runtime: nodejs20.x
+  endpointType: REGIONAL
   enableAPIGLogs: true
   tracing:
     apiGateway: true
@@ -79,50 +127,88 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
+        - "dynamodb:Query"
+        - "dynamodb:Scan"
+        - "dynamodb:GetItem"
         - "dynamodb:PutItem"
         - "dynamodb:UpdateItem"
-        - "dynamodb:GetItem"        
-        - "dynamodb:Scan"
+        - "dynamodb:DeleteItem"
+        - "dynamodb:DescribeTable"
+        - "dynamodb:BatchWrite*"
       Resource:
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.TABLE_DYNAMO}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_CLIENTE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_AUTORIZACION}"
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+        - "sqs:GetQueueUrl"
+        - "sqs:ReceiveMessage"
+        - "sqs:DeleteMessage"
+        - "sqs:GetQueueAttributes"
+      Resource: 
+        - "arn:aws:sqs:${self:provider.region}:*:${self:custom.settings.${self:custom.myStage}.QUEUE_NAME}"
+        - "arn:aws:sqs:${self:provider.region}:*:${self:custom.settings.${self:custom.myStage}.QUEUE_NAME_CLIENTE_CSV}"
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:DeleteObject"
+      Resource:
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_VIRGINIA}/*"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_OREGON}/*"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CLIENTE_UNICO_CSV_VIRGINIA}"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CLIENTE_UNICO_CSV_OREGON}"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CLIENTE_UNICO_CSV_VIRGINIA}/*"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CLIENTE_UNICO_CSV_OREGON}/*"
 
   vpc:
-    securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}}
-    subnetIds: ${self:custom.subnets.${self:custom.myStage}}
+      securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}.${self:provider.region}}
+      subnetIds: ${self:custom.subnets.${self:custom.myStage}.${self:provider.region}}
 functions:  
-  getFilterDateClientHandler:
-    handler: handlers/search-client-date.handler
+  getHelloWorldHandler:
+    handler: handlers/hola-mundo.handler
     timeout: 25
     events:
       - http:
-          path: /search-client-date
+          path: /holamundo
           method: get
           cors:
-            origin: "*"          
+            origin: "*"
+          authorizer:
+            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
+            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
+            type: request
+            identitySource: method.request.header.Authorization         
     logRetentionInDays: 14
-
-  authNgrHandler:
-    handler: handlers/authNgr.handler
-    timeout: 16
-    events:
-      - http:
-          path: /auth-ngr
-          method: get
-          cors:
-            origin: "*"          
-    logRetentionInDays: 14
-
-  createClientsHandler:
-    handler: handlers/create-clients.handler
+  getClientDocNode:
+    handler: handlers/search-client.handler
     timeout: 25
     events:
       - http:
-          path: /create-client
+          path: /documento
           method: post
           cors:
             origin: "*"
-          #authorizer:
-          #  name: authorizer
-          #  arn: "arn:aws:cognito-idp:${self:provider.region}:#{AWS::AccountId}:userpool/${self:custom.settings.${self:custom.myStage}.USER_POOL}"
-          # scopes: ${self:custom.multiMarcaScope.${self:custom.myStage}}
+          authorizer:
+            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
+            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
+            type: request
+            identitySource: method.request.header.Authorization         
+    logRetentionInDays: 14
+  postRegDocClienteNode:
+    handler: handlers/create-customer.handler
+    timeout: 25
+    events:
+      - http:
+          path: /cliente
+          method: post
+          cors:
+            origin: "*"
+          authorizer:
+            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
+            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
+            type: request
+            identitySource: method.request.header.Authorization         
     logRetentionInDays: 14

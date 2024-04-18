@@ -48,3 +48,20 @@ module.exports.searchClientsByDate = _params => {
     console.log("Datos filtrados", data);
     return data;
 };
+
+module.exports.searchCuponBycode = _params => {
+    //let item_data = removeEmptyStringElements(item);
+    
+    /*return dynamo.put(_params).promise().then(() => {
+        return item;
+    });*/
+
+    console.log("Envio de parametros", _params);
+
+    const data = dynamo.query(_params)
+    .promise()
+    .then(response => response.Items);
+
+    console.log("Datos filtrados", data);
+    return data;
+};
