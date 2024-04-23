@@ -4,6 +4,7 @@ const customerService = require('../service/customerService');
 const dynamo = DynamoClient.getInstance();
 const validarCreacionCliente = require('../validators/customerCreateValidator');
 const responseHandler = require('../response/customerResponse');
+
 module.exports.handler = async (event, context, callback) => {   
     console.log("datos AQUI ", event.body);
     const data = JSON.parse(event.body);

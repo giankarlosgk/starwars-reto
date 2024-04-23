@@ -18,7 +18,7 @@ const clienteSchema = new dynamoose.Schema({
     correo: String,
     checkTratamiento: Number,
     fechaTratamiento: String,
-    origenTratamiento: String,
+    origenCheckTratamiento: String,
     marcaCheckTratamiento: String,
     checkPromoBB: Number,
     fechaCheckPromoBB: String,

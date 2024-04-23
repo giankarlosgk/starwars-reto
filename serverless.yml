@@ -212,3 +212,8 @@ functions:
             type: request
             identitySource: method.request.header.Authorization         
     logRetentionInDays: 14
+  generaClienteCsvNode:
+    handler: handlers/sqs-create-customer.handler
+    vpc:
+      securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}.${self:provider.region}}
+      subnetIds: ${self:custom.subnets.${self:custom.myStage}.${self:provider.region}}

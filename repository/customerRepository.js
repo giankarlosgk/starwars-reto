@@ -3,6 +3,8 @@ const DynamoClient = require('../utils/dynamoClient');
 const dynamo = DynamoClient.getInstance();
 const marcaMap = require('../utils/marcaConfig');
 const Cliente = require('../model/customer');
+const sqsRepository = require('../sqs/sqsRepository');
+const { getFormattedDate } = require('../utils/dateUtils.js');
 class CustomerRepository {
     constructor() {
         this.table = process.env.AWS_TABLE_CLIENTE;
@@ -46,15 +48,17 @@ class CustomerRepository {
         const promoDate = `fechaCheckPromo${key}`;
         const promoOrigin = `origenCheckPromo${key}`;
         console.log("Pasa"+ promoCheck);
-        if (!existingCliente[promoCheck] || existingCliente[promoCheck] === null || existingCliente[promoCheck] === 0) {
+        if (!existingCliente[promoCheck] || existingCliente[promoCheck] === 0) {
             datosParaActualizar[promoCheck] = data.publicidad;
-            datosParaActualizar[promoDate] = new Date().toISOString();
+            datosParaActualizar[promoDate] = getFormattedDate();
             datosParaActualizar[promoOrigin] = data.canal;
-        } 
+        }else{
+            // Mantener los datos existentes si ya existen y no se requiere actualizar
+            datosParaActualizar[promoCheck] = existingCliente[promoCheck];
+            datosParaActualizar[promoDate] = getFormattedDate();
+            datosParaActualizar[promoOrigin] = existingCliente[promoOrigin];
+        }
         console.log("Asigna para actualizar ");
-        datosParaActualizar[promoCheck] = existingCliente[promoCheck];
-        datosParaActualizar[promoDate] = existingCliente[promoDate];
-        datosParaActualizar[promoOrigin] = existingCliente[promoOrigin];
     }
 
     createInformationData(marca, data, datosParaActualizar, marcaMap) {
@@ -67,13 +71,14 @@ class CustomerRepository {
         const promoOrigin = `origenCheckPromo${key}`;
             
         datosParaActualizar[promoCheck] = data.publicidad;
-        datosParaActualizar[promoDate] = new Date().toISOString();
+        datosParaActualizar[promoDate] = getFormattedDate();
         datosParaActualizar[promoOrigin] = data.canal;
     }
 
     async createCliente(data){
         //const startTime = moment();
         const { documento, tipoDoc, marca } = data;
+
         try {
             let datosParaActualizar = {
                 nombre:  data.nombre.toUpperCase(),
@@ -87,20 +92,31 @@ class CustomerRepository {
     
             // Si el cliente ya tiene registrado checkTratamiento y es 0 o es null, actualizamos con los datos nuevos
             //if (existingCliente.len && (existingCliente.checkTratamiento === null || existingCliente.checkTratamiento === 0)) {
-                datosParaActualizar.checkTratamiento = data.checkTratamiento;
-                datosParaActualizar.fechaTratamiento = data.fechaTratamiento;
-                datosParaActualizar.origenTratamiento = data.origenTratamiento;
+                datosParaActualizar.checkTratamiento = data.gestionDatos;
+                datosParaActualizar.fechaTratamiento = getFormattedDate();
+                datosParaActualizar.origenCheckTratamiento = data.canal;
+                datosParaActualizar.marcaCheckTratamiento = data.marca;
            // }
 
             this.createInformationData(marca, data, datosParaActualizar,marcaMap);
     
             // Actualizar o crear el cliente
             let resultado = await Cliente.update({ documento, tipoDoc }, datosParaActualizar);
+            try {
+                datosParaActualizar.documento = documento;
+                datosParaActualizar.tipoDoc = tipoDoc;
+                await sqsRepository.initialize();
+                await sqsRepository.sendClientCsvQueue(datosParaActualizar)
+                .then(() => console.log('Mensaje enviado correctamente'))
+                .catch(err => console.error('Error al enviar mensaje:', err));
+            } catch (error) {
+                console.log("Error en la cola "+ error);
+            }
             return resultado;
             //res.json({ message: 'Cliente actualizado con éxito', data: resultado });
         } catch (error) {
             console.error('Error creando el cliente:', error);
-            res.status(500).json({ message: 'Error al procesar la solicitud', error: error.message });
+            return error;
         }
     }
 
@@ -119,20 +135,27 @@ class CustomerRepository {
     
             // Si el cliente ya tiene registrado checkTratamiento y es 0 o es null, actualizamos con los datos nuevos
             if (existingCliente && (existingCliente.checkTratamiento === null || existingCliente.checkTratamiento === 0)) {
-                datosParaActualizar.checkTratamiento = data.checkTratamiento;
-                datosParaActualizar.fechaTratamiento = data.fechaTratamiento;
-                datosParaActualizar.origenTratamiento = data.origenTratamiento;
+                datosParaActualizar.checkTratamiento = data.gestionDatos;
+                datosParaActualizar.fechaTratamiento = getFormattedDate();
+                datosParaActualizar.origenCheckTratamiento = data.canal;
+                datosParaActualizar.marcaCheckTratamiento = data.marca;
             }
 
             this.updateInformationData(marca, data, existingCliente, datosParaActualizar,marcaMap);
             console.log("Datos asignados " + JSON.stringify(datosParaActualizar))
             // Actualizar o crear el cliente
             let resultado = await Cliente.update({ documento, tipoDoc }, datosParaActualizar);
+            datosParaActualizar.documento = documento;
+            datosParaActualizar.tipoDoc = tipoDoc;
+            sqsRepository.sendClientCsvQueue(datosParaActualizar)
+            .then(() => console.log('Mensaje enviado correctamente'))
+            .catch(err => console.error('Error al enviar mensaje:', err));
             return resultado;
             //res.json({ message: 'Cliente actualizado con éxito', data: resultado });
         } catch (error) {
             console.error('Error actualizando el cliente:', error);
-            res.status(500).json({ message: 'Error al procesar la solicitud', error: error.message });
+            //res.status(500).json({ message: 'Error al procesar la solicitud', error: error.message });
+            return error;
         }
     }
 

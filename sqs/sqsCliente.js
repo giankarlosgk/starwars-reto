@@ -1,14 +1,9 @@
 // src/sqsClient.js
 const AWS = require('aws-sdk');
 
-// Configura tus credenciales y la región de AWS si no están configuradas globalmente
-AWS.config.update({
-  region: 'tu-región', // Ejemplo: 'us-west-2'
-  // credentials: new AWS.Credentials('tu-access-key-id', 'tu-secret-access-key')
-});
 
-const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-const QUEUE_URL = 'tu-url-de-cola-SQS'; // Asegúrate de proporcionar la URL correcta de tu cola SQS
+const sqs = new AWS.SQS();
+const QUEUE_URL = process.env.QUEUE_NAME_CLIENTE_CSV;
 
 function sendClientCsvQueue(cliente) {
     const body = JSON.stringify(cliente);
