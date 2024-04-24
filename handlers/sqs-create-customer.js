@@ -26,7 +26,7 @@ exports.handler = async (event) => {
 
             // Configurar metadata y nombre del archivo
             const fileName = `${body.documento || 'unknown'}.csv`;
-            const folderName = getFormattedDateFolder() + "/"; // Formato YYYY-MM-DD
+            const folderName = getFormattedDateFolder() + "/"; // Formato YYYYMMDD
             const params = {
                 Bucket: bucketName,
                 Key: `${folderName}${fileName}`,
