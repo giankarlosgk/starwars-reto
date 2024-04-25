@@ -49,12 +49,15 @@ class CustomerRepository {
         const promoOrigin = `origenCheckPromo${key}`;
         console.log("Pasa"+ promoCheck);
         if (!existingCliente[promoCheck] || existingCliente[promoCheck] === 0) {
-            datosParaActualizar[promoCheck] = data.publicidad;
+            console.log("Actualiza en 0" + Number(data.publicidad));
+            datosParaActualizar[promoCheck] = Number(data.publicidad);
             datosParaActualizar[promoDate] = getFormattedDate();
             datosParaActualizar[promoOrigin] = data.canal;
         }else{
+            console.log("Actualiza en 1");
+            console.log("Check promo "+Number(existingCliente[promoCheck]))
             // Mantener los datos existentes si ya existen y no se requiere actualizar
-            datosParaActualizar[promoCheck] = existingCliente[promoCheck];
+            datosParaActualizar[promoCheck] = Number(existingCliente[promoCheck]);
             datosParaActualizar[promoDate] = getFormattedDate();
             datosParaActualizar[promoOrigin] = existingCliente[promoOrigin];
         }
@@ -132,10 +135,11 @@ class CustomerRepository {
                 telefono: data.telefono || existingCliente.telefono,
                 correo: data.correo ? data.correo.toUpperCase() : existingCliente.correo,
             };
-    
+            console.log("Gestion de datos:  " + existingCliente.checkTratamiento)
+            console.log("Request Gestion de datos:  " + data.gestionDatos)
             // Si el cliente ya tiene registrado checkTratamiento y es 0 o es null, actualizamos con los datos nuevos
             if (existingCliente && (existingCliente.checkTratamiento === null || existingCliente.checkTratamiento === 0)) {
-                datosParaActualizar.checkTratamiento = data.gestionDatos;
+                datosParaActualizar.checkTratamiento = Number(data.gestionDatos);
                 datosParaActualizar.fechaTratamiento = getFormattedDate();
                 datosParaActualizar.origenCheckTratamiento = data.canal;
                 datosParaActualizar.marcaCheckTratamiento = data.marca;
