@@ -60,7 +60,7 @@ custom:
         - subnet-0081b5e73dac08f9d
         - subnet-0fd4409cc2291e1ff
   customDomain:
-    basePath: clienteunico
+    basePath: clienteunico/v1
     endPointType: 'regional'
     domainName: ${self:custom.domains.${self:custom.myStage}}
     stage: "${self:custom.myStage}"
@@ -71,15 +71,20 @@ custom:
       REGION: ${self:provider.region}
       AWS_TABLE: ngr-001-devcliu-table-clienteunico
       AWS_TABLE_CLIENTE: scr-amauta-table-cliente
+      AWS_TABLE_PEDIDO_OSD: scr-osd-table-pedido
       AWS_TABLE_AUTORIZACION: scr-002-amauta-table-autorizacion-historial
       QUEUE_NAME: ngr-002-devcliu-queue-clienteunico
       QUEUE_NAME_CLIENTE_CSV : ngr-002-devclienteunicocsv-queue-amauta
+      QUEUE_NAME_PEDIDO_OSD_CSV : ngr-002-devpedidocsv-queue-osd
       S3_NAME: ngr-001-devcliu-clienteunico
       S3_NAME_VIRGINIA: ngr-001-devcliu-clienteunico-us-east-1
       S3_NAME_OREGON: ngr-001-devcliu-clienteunico-us-west-2
       S3_NAME_CLIENTE_UNICO_CSV: generacioncsvcliente-amauta
       S3_NAME_CLIENTE_UNICO_CSV_VIRGINIA: generacioncsvcliente-amauta-us-east-1
       S3_NAME_CLIENTE_UNICO_CSV_OREGON: generacioncsvcliente-amauta-us-west-2
+      S3_NAME_PEDIDO_OSD_CSV: pedidocsv-osd
+      S3_NAME_PEDIDO_OSD_CSV_VIRGINIA: pedidocsv-osd-us-east-1
+      S3_NAME_PEDIDO_OSD_CSV_OREGON: pedidocsv-osd-us-west-2
       LAMBDA_REQUEST_VALIDATOR: oauth2-qadrp-lambdaAuthorizer
       LAMBDA_REQUEST_VALIDATOR_RESULT_TTL: 0
     qa:
@@ -138,6 +143,7 @@ provider:
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_CLIENTE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_PEDIDO_OSD}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_AUTORIZACION}"
     - Effect: "Allow"
       Action:
@@ -149,6 +155,7 @@ provider:
       Resource: 
         - "arn:aws:sqs:${self:provider.region}:*:${self:custom.settings.${self:custom.myStage}.QUEUE_NAME}"
         - "arn:aws:sqs:${self:provider.region}:*:${self:custom.settings.${self:custom.myStage}.QUEUE_NAME_CLIENTE_CSV}"
+        - "arn:aws:sqs:${self:provider.region}:*:${self:custom.settings.${self:custom.myStage}.QUEUE_NAME_PEDIDO_OSD_CSV}"
     - Effect: "Allow"
       Action:
         - "s3:ListBucket"
@@ -162,6 +169,10 @@ provider:
         - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CLIENTE_UNICO_CSV_OREGON}"
         - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CLIENTE_UNICO_CSV_VIRGINIA}/*"
         - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CLIENTE_UNICO_CSV_OREGON}/*"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_PEDIDO_OSD_CSV_VIRGINIA}"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_PEDIDO_OSD_CSV_OREGON}"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_PEDIDO_OSD_CSV_VIRGINIA}/*"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_PEDIDO_OSD_CSV_OREGON}/*"        
 
   vpc:
       securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}.${self:provider.region}}
@@ -197,6 +208,21 @@ functions:
             type: request
             identitySource: method.request.header.Authorization         
     logRetentionInDays: 14
+  getPedidoOsdNode:
+    handler: handlers/search-pedido.handler
+    timeout: 25
+    events:
+      - http:
+          path: /osd/consulta
+          method: post
+          cors:
+            origin: "*"
+          authorizer:
+            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
+            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
+            type: request
+            identitySource: method.request.header.Authorization         
+    logRetentionInDays: 14
   postRegDocClienteNode:
     handler: handlers/create-customer.handler
     timeout: 25
@@ -212,8 +238,35 @@ functions:
             type: request
             identitySource: method.request.header.Authorization         
     logRetentionInDays: 14
+  postRegPedidoNode:
+    handler: handlers/create-pedido.handler
+    timeout: 25
+    events:
+      - http:
+          path: /pedido
+          method: post
+          cors:
+            origin: "*"
+          authorizer:
+            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
+            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
+            type: request
+            identitySource: method.request.header.Authorization         
+    logRetentionInDays: 14
   generaClienteCsvNode:
     handler: handlers/sqs-create-customer.handler
     vpc:
       securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}.${self:provider.region}}
       subnetIds: ${self:custom.subnets.${self:custom.myStage}.${self:provider.region}}
+  generaPedidoCsvNode:
+    handler: handlers/sqs-create-pedido.handler
+    vpc:
+      securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}.${self:provider.region}}
+      subnetIds: ${self:custom.subnets.${self:custom.myStage}.${self:provider.region}}
+resources:
+  Resources:
+    #Create SQS 
+    Queuengrclientecsv:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:custom.settings.${self:custom.myStage}.QUEUE_NAME_PEDIDO_OSD_CSV}
