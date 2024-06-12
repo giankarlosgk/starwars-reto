@@ -71,7 +71,7 @@ custom:
       REGION: ${self:provider.region}
       AWS_TABLE: ngr-001-devcliu-table-clienteunico
       AWS_TABLE_CLIENTE: scr-amauta-table-cliente
-      AWS_TABLE_PEDIDO_OSD: scr-osd-table-pedido
+      AWS_TABLE_PEDIDO_OSD: scr-osd-table-pedido-transaccion
       AWS_TABLE_AUTORIZACION: scr-002-amauta-table-autorizacion-historial
       QUEUE_NAME: ngr-002-devcliu-queue-clienteunico
       QUEUE_NAME_CLIENTE_CSV : ngr-002-devclienteunicocsv-queue-amauta

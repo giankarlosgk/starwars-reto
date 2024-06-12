@@ -5,6 +5,14 @@ function getFormattedDate() {
     return moment().subtract(5, 'hours').format('YYYY-MM-DD HH:mm:ss');
 }
 
+function getEndOfDayUnixTimestamp() {
+    /*const now = moment().utc();
+    const adjustedNow = now.subtract(5, 'hours');
+    const endOfDay = adjustedNow.clone().endOf('day').set({ hour: 16, minute: 59, second: 0 });*/
+    const timePlusTwoMinutes = moment().subtract(5, 'hours').add(2, 'minutes');
+    return timePlusTwoMinutes.unix();
+}
+
 function getFormattedDateFolder() {
     // Crear un momento actual y restarle 5 horas
     const adjustedDate = moment().subtract(5, 'hours');
@@ -14,5 +22,6 @@ function getFormattedDateFolder() {
 }
 module.exports = {
     getFormattedDate,
-    getFormattedDateFolder
+    getFormattedDateFolder,
+    getEndOfDayUnixTimestamp
 };

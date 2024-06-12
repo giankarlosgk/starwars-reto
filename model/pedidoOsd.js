@@ -22,7 +22,8 @@ const pedidoSchema = new dynamoose.Schema({
     nro_correlativo: String,
     marca: String,
     canal: String,
-    tienda: String
+    tienda: String,
+    expire_ttl: Number
 }, {
     saveUnknown: false,
     timestamps: false

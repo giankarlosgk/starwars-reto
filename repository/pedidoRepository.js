@@ -4,7 +4,7 @@ const dynamo = DynamoClient.getInstance();
 const marcaMap = require('../utils/marcaConfig');
 const Pedido = require('../model/pedidoOsd');
 const sqsRepositoryPedido = require('../sqs/sqsRepositoryPedido');
-const { getFormattedDate } = require('../utils/dateUtils.js');
+const { getFormattedDate, getEndOfDayUnixTimestamp } = require('../utils/dateUtils.js');
 class PedidoRepository {
     constructor() {
         this.table = process.env.AWS_TABLE_PEDIDO_OSD;
@@ -33,13 +33,26 @@ class PedidoRepository {
                 nro_correlativo: data.nro_correlativo.toUpperCase(),
                 marca: data.marca.toUpperCase(),
                 canal: data.canal.toUpperCase(),
-                tienda: data.tienda.toUpperCase()
+                tienda: data.tienda.toUpperCase(),
+                expire_ttl: getEndOfDayUnixTimestamp()
             };
             
             // Actualizar o crear el pedido
-            let resultado = await Pedido.create(datosParaActualizar);
+            let resultado;
+            try {
+               resultado = await Pedido.create(datosParaActualizar);
+            } catch (error) {
+                console.log("Error al registrar"+ error);
+            }
             // ACtualizar código cuando se habilite bucket
-            
+            try {
+                await sqsRepositoryPedido.initialize();
+                await sqsRepositoryPedido.sendPedidoCsvQueue(datosParaActualizar)
+                .then(() => console.log('Mensaje enviado correctamente'))
+                .catch(err => console.error('Error al enviar mensaje:', err));
+            } catch (error) {
+                console.log("Error en la cola "+ error);
+            }
             return resultado;
         } catch (error) {
             console.error('Error creando el pedido:', error);

@@ -28,13 +28,19 @@ module.exports.handler = async (event, context, callback) => {
       console.log("pedido obtenido " + JSON.stringify(pedido));
       console.log("pedido length " + pedido.length);
       if (pedido.length == 0) {
-        resultado = await pedidoService.create(data);
+        try {
+          resultado = await pedidoService.create(data);
+          return responseHandler(200, "ok", "Pedido registrado");
+        } catch (error) {
+          console.log("error ", error); 
+          return responseHandler(500, "error", "Error al crear pedido");
+        }
+        
       }else{
         console.log("Pedido repetido ", resultado); 
         return responseHandler(500, "error", "Pedido repetido en tienda");
-        //resultado = await pedidoService.update(data, cliente[0]);
       } 
-      return responseHandler(200, "ok", "Pedido registrado");
+      
 
     } catch (error) {
       console.error("Error al obtener el cliente:", error);

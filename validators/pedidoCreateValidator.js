@@ -48,7 +48,7 @@ const createPedidoSchema = Joi.object({
     date: Joi.string().trim().allow('').required(),
     client_name: Joi.string().trim().allow('').required(),
     order_id: Joi.string().trim().allow('').required(),
-    id_pedido: Joi.string().email().allow('').required()
+    id_pedido: Joi.string().trim().allow('').required()
 });
 
 const validarCreacionPedido = (pedidoData) => {
