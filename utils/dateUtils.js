@@ -9,7 +9,7 @@ function getEndOfDayUnixTimestamp() {
     /*const now = moment().utc();
     const adjustedNow = now.subtract(5, 'hours');
     const endOfDay = adjustedNow.clone().endOf('day').set({ hour: 16, minute: 59, second: 0 });*/
-    const timePlusTwoMinutes = moment().subtract(5, 'hours').add(2, 'minutes');
+    const timePlusTwoMinutes = moment().subtract(5, 'hours').add(2, 'day');
     return timePlusTwoMinutes.unix();
 }
 

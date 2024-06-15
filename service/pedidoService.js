@@ -1,11 +1,18 @@
 const pedidoRepository = require('../repository/pedidoRepository');
-//const customerService = require('../service/customerService');
+const { filtrarPedidosPorEstado } = require('../utils/filtroUtils');
 class CustomerService {
 
     
     
     async findByPkAndSk(pk,sk){
         return await pedidoRepository.searchPedidoByPkAndSk(pk,sk);
+    }
+
+    async findByMultipleCombinations(pk,configuraciones){
+        //return await pedidoRepository.searchPedidoByPkAndSk(pk,configuracioness);
+        const pedidos = await pedidoRepository.searchPedidosByCombinations(pk, configuraciones);
+        const configEtapaMax = 3;// Verifica que si ya tiene esta estapa, el dato o registro deba ser excluido
+        return filtrarPedidosPorEstado(pedidos, configEtapaMax);
     }
     
     async create(data){

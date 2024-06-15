@@ -14,7 +14,7 @@ class PedidoRepository {
         //const startTime = moment();
         
         let pk = data.marca.toUpperCase()+"#"+data.canal.toUpperCase()+"#"+data.tienda.toUpperCase();
-        let sk = data.ship_via.toUpperCase()+"#"+data.sales_type.toUpperCase()+"#"+data.action.toUpperCase();
+        let sk = data.ship_via.toUpperCase()+"#"+data.sales_type.toUpperCase()+"#"+data.action.toUpperCase()+"#"+data.nro_correlativo.toUpperCase();
         console.log("Creando PK " + pk + " sk " + sk);
         try {
             let datosParaActualizar = {
@@ -76,6 +76,29 @@ class PedidoRepository {
         console.log("Datos filtrados", data);
         return data.Items;
     }
+
+    async searchPedidosByCombinations(pk, combinaciones) {
+        const allResults = [];
+    
+        for (let comb of combinaciones) {
+            const skPrefix = `${comb.ship_via}#${comb.sales_type}`;
+    
+            const params = {
+                TableName: this.table,
+                KeyConditionExpression: 'pk = :v_pk AND begins_with(sk, :v_sk_prefix)',
+                ExpressionAttributeValues: {
+                    ':v_pk': pk,
+                    ':v_sk_prefix': skPrefix
+                }
+            };
+    
+            const data = await dynamo.query(params).promise();
+            allResults.push(...data.Items);
+        }
+    
+        return allResults;
+    }
+    
 }
 
 

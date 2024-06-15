@@ -9,7 +9,7 @@ module.exports.handler = async (event, context, callback) => {
     console.log("datos AQUI ", event.body);
     const data = JSON.parse(event.body);
     const pk = data.marca+"#"+data.canal+"#"+data.tienda;
-    const sk = data.ship_via+"#"+data.sales_type+"#"+data.action;
+    const sk = data.ship_via+"#"+data.sales_type+"#"+data.action+"#"+data.nro_correlativo;
     try {
       // Validación      
       const { error } = validarCreacionPedido(data);

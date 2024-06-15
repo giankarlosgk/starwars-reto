@@ -8,10 +8,10 @@ module.exports.handler = async (event, context, callback) => {
     console.log("datos AQUI ", event.body);
     const data = JSON.parse(event.body);
     const pk = data.marca+"#"+data.canal+"#"+data.tienda;
-    let sk = data.ship_via + "#" + data.sales_type;
+    /*let sk = data.ship_via + "#" + data.sales_type;
     if (data.action && data.action.trim() !== "") {
       sk += "#" + data.action;
-    }
+    }*/
     
     try {
       // Validación
@@ -20,11 +20,11 @@ module.exports.handler = async (event, context, callback) => {
           return responseHandler(400,"error", null, error.details );
       }
 
-      const pedido = await pedidoService.findByPkAndSk(pk,sk);
+      const pedido = await pedidoService.findByMultipleCombinations(pk, data.configuraciones);
       console.log("pedido info " + pedido);
       if (pedido.length === 0) {
         return responseHandler(404,"error",null, "pedido no encontrado");
-      }      
+      }     
       return responseHandler(200, "Ok", pedido);
 
     } catch (error) {
