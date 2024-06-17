@@ -72,6 +72,7 @@ custom:
       AWS_TABLE: ngr-001-devcliu-table-clienteunico
       AWS_TABLE_CLIENTE: scr-amauta-table-cliente
       AWS_TABLE_PEDIDO_OSD: scr-osd-table-pedido-transaccion
+      AWS_TABLE_CONFIGURACION_OSD: scr-osd-table-configuracion
       AWS_TABLE_AUTORIZACION: scr-002-amauta-table-autorizacion-historial
       QUEUE_NAME: ngr-002-devcliu-queue-clienteunico
       QUEUE_NAME_CLIENTE_CSV : ngr-002-devclienteunicocsv-queue-amauta
@@ -144,6 +145,7 @@ provider:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_CLIENTE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_PEDIDO_OSD}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_CONFIGURACION_OSD}"        
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_AUTORIZACION}"
     - Effect: "Allow"
       Action:
@@ -244,6 +246,21 @@ functions:
     events:
       - http:
           path: /pedido
+          method: post
+          cors:
+            origin: "*"
+          authorizer:
+            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
+            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
+            type: request
+            identitySource: method.request.header.Authorization         
+    logRetentionInDays: 14
+  postRegConfigOsdNode:
+    handler: handlers/create-config-osd.handler
+    timeout: 25
+    events:
+      - http:
+          path: /config
           method: post
           cors:
             origin: "*"

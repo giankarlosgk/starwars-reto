@@ -1,4 +1,5 @@
 const pedidoRepository = require('../repository/pedidoRepository');
+const configRepository = require('../repository/osdConfigRepository');
 const { filtrarPedidosPorEstado } = require('../utils/filtroUtils');
 class CustomerService {
 
@@ -17,6 +18,10 @@ class CustomerService {
     
     async create(data){
         return await pedidoRepository.createPedido(data);
+    }
+
+    async createConfig(data){
+        return await configRepository.createConfig(data);
     }
     /*
     async update(data, cliente){
