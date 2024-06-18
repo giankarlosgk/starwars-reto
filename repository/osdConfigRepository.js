@@ -33,7 +33,7 @@ class PedidoRepository {
         }
     }
 
-    async searchPedidoByPkAndSk(pk,sk){
+    async searchConfigByPkAndSk(pk,sk){
         console.log("Pk db " + pk)
         console.log("Sk db " + sk)
         let params = {
@@ -47,29 +47,7 @@ class PedidoRepository {
         }
         const data = await dynamo.query(params).promise();
         console.log("Datos filtrados", data);
-        return data.Items;
-    }
-
-    async searchPedidosByCombinations(pk, combinaciones) {
-        const allResults = [];
-    
-        for (let comb of combinaciones) {
-            const skPrefix = `${comb.ship_via}#${comb.sales_type}`;
-    
-            const params = {
-                TableName: this.table,
-                KeyConditionExpression: 'pk = :v_pk AND begins_with(sk, :v_sk_prefix)',
-                ExpressionAttributeValues: {
-                    ':v_pk': pk,
-                    ':v_sk_prefix': skPrefix
-                }
-            };
-    
-            const data = await dynamo.query(params).promise();
-            allResults.push(...data.Items);
-        }
-    
-        return allResults;
+        return data;
     }
     
 }

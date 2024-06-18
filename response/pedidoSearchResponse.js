@@ -1,12 +1,12 @@
-const responseSearchHandler = (statusCode, mensaje, pedido=null, detalle = "") => {
+const responseSearchHandler = (statusCode, mensaje, configuracion=null, detalle = "") => {
     let responseBody = { status: mensaje, detalle };
 
     if (detalle) {
         responseBody.detalle = detalle;
     }
 
-    if (pedido) {
-        responseBody.pedido = pedido;
+    if (configuracion) {
+        responseBody.configuracion = configuracion;
     }
     return {
         statusCode,

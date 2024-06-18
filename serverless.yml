@@ -270,6 +270,21 @@ functions:
             type: request
             identitySource: method.request.header.Authorization         
     logRetentionInDays: 14
+  postSearchConfigNode:
+    handler: handlers/search-config-osd.handler
+    timeout: 25
+    events:
+      - http:
+          path: /getconfig
+          method: post
+          cors:
+            origin: "*"
+          authorizer:
+            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
+            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
+            type: request
+            identitySource: method.request.header.Authorization
+    logRetentionInDays: 14 
   generaClienteCsvNode:
     handler: handlers/sqs-create-customer.handler
     vpc:

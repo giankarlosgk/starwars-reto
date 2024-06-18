@@ -23,6 +23,10 @@ class CustomerService {
     async createConfig(data){
         return await configRepository.createConfig(data);
     }
+
+    async getConfig(pk,sk){
+        return await configRepository.searchConfigByPkAndSk(pk,sk);
+    }
     /*
     async update(data, cliente){
         console.log("Service Datos del cliente existente:", JSON.stringify(cliente));
