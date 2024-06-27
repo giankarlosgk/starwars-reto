@@ -48,7 +48,9 @@ const responseSearchHandler = (statusCode, mensaje, cliente = null, detalle = ""
 
     return {
         statusCode,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"},
         body: JSON.stringify(responseBody)
     };
 };
