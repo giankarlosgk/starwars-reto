@@ -33,6 +33,7 @@ class PedidoRepository {
         }
     }
 
+    
     async searchConfigByPkAndSk(pk,sk){
         console.log("Pk db " + pk)
         console.log("Sk db " + sk)

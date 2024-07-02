@@ -7,6 +7,8 @@ const responseSearchHandler = (statusCode, mensaje, configuracion=null, detalle 
 
     if (configuracion) {
         responseBody.configuracion = configuracion;
+    }else{
+        responseBody.configuracion = null;
     }
     return {
         statusCode,
