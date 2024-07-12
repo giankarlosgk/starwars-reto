@@ -22,11 +22,9 @@ const pedidoSchema = Joi.object({
         'any.required': 'El campo marca es obligatorio.',
         'string.base': 'El campo marca debe ser texto.'
     }),
-    canal: Joi.string().trim().required().messages({
-        'string.empty': 'El campo canal no debe estar vacío.',
-        'string.trim': 'El campo canal no debe contener espacios en blanco al inicio o al final.',
-        'any.required': 'El campo canal es obligatorio.',
-        'string.base': 'El campo canal debe ser texto.'
+    canal: Joi.array().items(Joi.string().trim().required()).required().messages({
+        'array.base': 'El canal debe ser una lista de cadenas.',
+        'any.required': 'El arreglo canal es obligatorio.'
     }),
     tienda: Joi.string().trim().required().messages({
         'string.empty': 'El campo tienda no debe estar vacío.',

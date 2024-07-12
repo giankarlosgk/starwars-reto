@@ -1,6 +1,6 @@
 const dynamoose = require('dynamoose');
 // PK: Marca#Canal#Tienda
-// SK: Modalidad#Tipo#Estado
+// SK: Modalidad#Tipo#Estado#Correlativo
 const pedidoSchema = new dynamoose.Schema({
     pk: {
         type: String,

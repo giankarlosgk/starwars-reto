@@ -20,7 +20,7 @@ module.exports.handler = async (event, context, callback) => {
           return responseHandler(400,"error", null, error.details );
       }
 
-      const pedido = await pedidoService.findByMultipleCombinations(pk, data.configuraciones);
+      const pedido = await pedidoService.findByMultipleCombinations(data.marca, data.canal, data.tienda, data.configuraciones);
       console.log("pedido info " + pedido);
       if (pedido.length === 0) {
         return responseHandler(404,"error",null, "pedido no encontrado");

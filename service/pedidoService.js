@@ -9,9 +9,9 @@ class CustomerService {
         return await pedidoRepository.searchPedidoByPkAndSk(pk,sk);
     }
 
-    async findByMultipleCombinations(pk,configuraciones){
+    async findByMultipleCombinations(marca, canales, tienda, configuraciones){
         //return await pedidoRepository.searchPedidoByPkAndSk(pk,configuracioness);
-        const pedidos = await pedidoRepository.searchPedidosByCombinations(pk, configuraciones);
+        const pedidos = await pedidoRepository.searchPedidosByCombinations(marca, canales, tienda, configuraciones);
         const configEtapaMax = 3;// Verifica que si ya tiene esta estapa, el dato o registro deba ser excluido
         return filtrarPedidosPorEstado(pedidos, configEtapaMax);
     }

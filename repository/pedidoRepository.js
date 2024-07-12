@@ -77,23 +77,26 @@ class PedidoRepository {
         return data.Items;
     }
 
-    async searchPedidosByCombinations(pk, combinaciones) {
+    async searchPedidosByCombinations(marca, canales, tienda, combinaciones) {
         const allResults = [];
-    
-        for (let comb of combinaciones) {
-            const skPrefix = `${comb.ship_via}#${comb.sales_type}`;
-    
-            const params = {
-                TableName: this.table,
-                KeyConditionExpression: 'pk = :v_pk AND begins_with(sk, :v_sk_prefix)',
-                ExpressionAttributeValues: {
-                    ':v_pk': pk,
-                    ':v_sk_prefix': skPrefix
-                }
-            };
-    
-            const data = await dynamo.query(params).promise();
-            allResults.push(...data.Items);
+        for (let canal of canales) {
+                const pk = `${marca}#${canal}#${tienda}`;
+        
+            for (let comb of combinaciones) {
+                const skPrefix = `${comb.ship_via}#${comb.sales_type}`;
+        
+                const params = {
+                    TableName: this.table,
+                    KeyConditionExpression: 'pk = :v_pk AND begins_with(sk, :v_sk_prefix)',
+                    ExpressionAttributeValues: {
+                        ':v_pk': pk,
+                        ':v_sk_prefix': skPrefix
+                    }
+                };
+        
+                const data = await dynamo.query(params).promise();
+                allResults.push(...data.Items);
+            }
         }
     
         return allResults;
