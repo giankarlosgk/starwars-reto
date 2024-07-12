@@ -23,7 +23,7 @@ module.exports.handler = async (event, context, callback) => {
       const pedido = await pedidoService.findByMultipleCombinations(data.marca, data.canal, data.tienda, data.configuraciones);
       console.log("pedido info " + pedido);
       if (pedido.length === 0) {
-        return responseHandler(404,"error",null, "pedido no encontrado");
+        return responseHandler(200,"Ok",null, "pedido no encontrado");
       }     
       return responseHandler(200, "Ok", pedido);
 

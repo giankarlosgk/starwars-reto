@@ -9,14 +9,16 @@ const filtrarPedidosPorEstado = (pedidos, etapa) => {
 
         // Convertir action a número para comparación
         const actionNum = parseInt(action, 10);
+        //console.log(`Procesando pedido ${pedidoId} con estado ${actionNum}`);
 
         // Si el pedido ya ha alcanzado el estado "n", marcarlo para exclusión
-        if (actionNum >= etapa) {
+        if (actionNum === 0 || actionNum >= etapa) {
+            //console.log(`Excluyendo pedido ${pedidoId} con estado ${actionNum}`);
             pedidosExcluidos.add(pedidoId);
         }
 
         // Guardar el último estado del pedido
-        if (!ultimoEstadoPedidos[pedidoId] || actionNum > ultimoEstadoPedidos[pedidoId].action) {
+        if (!pedidosExcluidos.has(pedidoId) && (!ultimoEstadoPedidos[pedidoId] || actionNum > ultimoEstadoPedidos[pedidoId].action)) {
             ultimoEstadoPedidos[pedidoId] = { ...pedido, action: actionNum };
         }
     });
