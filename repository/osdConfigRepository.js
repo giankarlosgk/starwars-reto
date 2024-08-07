@@ -4,7 +4,7 @@ const dynamo = DynamoClient.getInstance();
 const marcaMap = require('../utils/marcaConfig');
 const Pedido = require('../model/pedidoOsd');
 const sqsRepositoryPedido = require('../sqs/sqsRepositoryPedido');
-const { getFormattedDate, getEndOfDayUnixTimestamp } = require('../utils/dateUtils.js');
+const { getFormattedDate, getEndOfDayUnixTimestamp,getExpirationAt3AMNextDayUnixTimestamp } = require('../utils/dateUtils.js');
 class PedidoRepository {
     constructor() {
         this.table = process.env.AWS_TABLE_CONFIGURACION_OSD;
