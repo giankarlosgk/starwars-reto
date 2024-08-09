@@ -5,7 +5,7 @@ const s3 = new AWS.S3();
 const region = process.env.AWS_REGION;
 //const bucketName = `${process.env.S3_NAME_PEDIDO_OSD_CSV}-${region}`;
 //Eliminar este código cuando se cree un nuevo S3
-const bucketName = `${process.env.S3_NAME_CLIENTE_UNICO_CSV}-${region}`;
+const bucketName = `${process.env.S3_NAME_PEDIDO_OSD_CSV}-${region}`;
 const { getFormattedDateFolder } = require('../utils/dateUtils.js');
 exports.handler = async (event) => {
     try {

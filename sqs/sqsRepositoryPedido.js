@@ -1,8 +1,9 @@
 const AWS = require('aws-sdk');
-AWS.config.update({ region: 'us-west-2' }); // Asegúrate de configurar la región correctamente
 
 class SqsRepository {
     constructor() {
+        const region = process.env.AWS_REGION;
+        AWS.config.update({ region });  // Configura la región
         this.sqs = new AWS.SQS();
         this.queueUrl = process.env.QUEUE_NAME_PEDIDO_OSD_CSV;
     }
