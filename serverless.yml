@@ -232,6 +232,21 @@ functions:
             type: request
             identitySource: method.request.header.Authorization         
     logRetentionInDays: 14
+  postRegEstadoListaPedido:
+    handler: handlers/update-estado-transaccion.handler
+    timeout: 25
+    events:
+      - http:
+          path: /depurar
+          method: post
+          cors:
+            origin: "*"
+          authorizer:
+            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
+            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
+            type: request
+            identitySource: method.request.header.Authorization         
+    logRetentionInDays: 14
   postSearchConfigNodeOsd:
     handler: handlers/search-config-osd.handler
     timeout: 25

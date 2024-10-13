@@ -37,11 +37,12 @@ const createPedidoSchema = Joi.object({
         'any.required': 'El campo nro_correlativo es obligatorio.',
         'string.base': 'El campo nro_correlativo debe ser texto.'
     }),
-    action: Joi.string().trim().required().messages({
+    action: Joi.string().trim().valid('0', '1', '2', '3').required().messages({
         'string.empty': 'El campo action no debe estar vacío.',
         'string.trim': 'El campo tipo action no debe contener espacios en blanco al inicio o al final.',
         'any.required': 'El campo tipo action es obligatorio.',
-        'string.base': 'El campo tipo action debe ser texto.'
+        'string.base': 'El campo tipo action debe ser texto.',
+        'any.only': 'El campo action solo puede contener los valores 0, 1, 2 o 3'
     }),
     ship_via_name: Joi.string().trim().allow('').required(),
     sales_type_name: Joi.string().trim().allow('').required(),
