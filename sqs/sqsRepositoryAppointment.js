@@ -5,7 +5,7 @@ class SqsRepository {
         const region = process.env.AWS_REGION;
         AWS.config.update({ region });  // Configura la región
         this.sqs = new AWS.SQS();
-        this.queueUrl = process.env.QUEUE_NAME_PEDIDO_OSD_CSV;
+        this.queueUrl = process.env.QUEUE_NAME_CITA_CSV;
     }
 
     static async getInstance() {
@@ -29,7 +29,7 @@ class SqsRepository {
         }
     }
   
-    async sendPedidoCsvQueue(pedido) {
+    async sendDataCsvQueue(pedido) {
         const messageBody = JSON.stringify(pedido);
         const params = {
             MessageBody: messageBody,

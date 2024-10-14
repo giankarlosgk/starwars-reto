@@ -6,61 +6,61 @@ plugins:
 custom:
   myStage: ${opt:stage, self:provider.stage}
   domains:
-    dev: osd.dev.api-ngr.com
-    qa: api.dev-qa.amauta.api-ngr.com
-    prod: osd.api-ngr.com
+    dev: #CONFIGURAR DOMINIO
+    qa: #CONFIGURAR DOMINIO
+    prod: #CONFIGURAR DOMINIO
   securitygroups:
     dev:
       us-east-1: # virginia
-        - sg-0df82d04ab647cec6
+        - #CONFIGURAR SECURITYGROUPS
       us-west-2: # oregon
-        - sg-0f46b6fce678e1d33
+        - #CONFIGURAR SECURITYGROUPS
     qa:
       us-east-1: # virginia
-        - sg-0df82d04ab647cec6
+        - #CONFIGURAR SECURITYGROUPS
       us-west-2: # oregon
-        - sg-0f46b6fce678e1d33
+        - #CONFIGURAR SECURITYGROUPS
     prod:
       us-east-1: # virginia
-        - sg-0da542fae4d132418
+        - #CONFIGURAR SECURITYGROUPS
       us-west-2: # oregon
-        - sg-031454b437717675e
+        - #CONFIGURAR SECURITYGROUPS
   subnets:
     dev:
       us-east-1: # virginia
-        - subnet-05fa503797db6ddbd
-        - subnet-04121d97b4403661d
-        - subnet-05706b8dce88e794d
-        - subnet-0992bf8b0653731c2
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
       us-west-2: # oregon
-        - subnet-03fba865cbd934b92
-        - subnet-04a809ebde67f1bc4
-        - subnet-056d0fe689ba24e86
-        - subnet-054f6e4cd193e2c1c
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
     qa:
       us-east-1: # virginia
-        - subnet-05fa503797db6ddbd
-        - subnet-04121d97b4403661d
-        - subnet-05706b8dce88e794d
-        - subnet-0992bf8b0653731c2
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
       us-west-2: # oregon
-        - subnet-03fba865cbd934b92
-        - subnet-04a809ebde67f1bc4
-        - subnet-056d0fe689ba24e86
-        - subnet-054f6e4cd193e2c1c
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
     prod:
       us-east-1: # virginia
-        - subnet-03af16f575ff0a1d8
-        - subnet-03979aafff38480e7
-        - subnet-0ae717cb262822206
-        - subnet-09d5ecd7d1c8269e2
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
       us-west-2: # oregon
-        - subnet-0f23c0e6e6c857978
-        - subnet-0dd16d01daf96151a
-        - subnet-0081b5e73dac08f9d
-        - subnet-0fd4409cc2291e1ff
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
+        - #CONFIGURAR SUBREDES
   customDomain:
-    basePath: osd
+    basePath: seguro
     endPointType: 'regional'
     domainName: ${self:custom.domains.${self:custom.myStage}}
     stage: "${self:custom.myStage}"
@@ -69,12 +69,11 @@ custom:
     dev:
       ACCOUND_ID: "#{AWS::AccountId}"
       REGION: ${self:provider.region}
-      AWS_TABLE_PEDIDO_OSD: scr-osd-table-pedido-transaccion
-      AWS_TABLE_CONFIGURACION_OSD: scr-osd-table-configuracion
-      QUEUE_NAME_PEDIDO_OSD_CSV : ngr-002-devpedidocsv-queue-osd-v3
-      S3_NAME_PEDIDO_OSD_CSV: pedidocsv-osd
-      S3_NAME_PEDIDO_OSD_CSV_VIRGINIA: pedidocsv-osd-us-east-1
-      S3_NAME_PEDIDO_OSD_CSV_OREGON: pedidocsv-osd-us-west-2
+      AWS_TABLE_AGENDA: test-table-agenda
+      QUEUE_NAME_CITA_CSV: test-cita-queue
+      S3_NAME_CITA_CSV: citacsv-test
+      S3_NAME_CITA_CSV_VIRGINIA: citacsv-test-us-east-1
+      S3_NAME_CITA_CSV_OREGON: citacsv-test-us-west-2
       LAMBDA_REQUEST_VALIDATOR: oauth2-qadrp-lambdaAuthorizer
       LAMBDA_REQUEST_VALIDATOR_RESULT_TTL: 0
     qa:
@@ -85,13 +84,12 @@ custom:
     prod:
       ACCOUND_ID: "#{AWS::AccountId}"
       REGION: ${self:provider.region}
-      AWS_TABLE_PEDIDO_OSD: scr-osd-prd-table-pedido-transaccion
-      AWS_TABLE_CONFIGURACION_OSD: scr-osd-prd-table-configuracion
-      QUEUE_NAME_PEDIDO_OSD_CSV : ngr-002-prdpedidocsv-queue-osd
-      S3_NAME_PEDIDO_OSD_CSV: pedidocsv-osd-prd
-      S3_NAME_PEDIDO_OSD_CSV_VIRGINIA: pedidocsv-osd-prd-us-east-1
-      S3_NAME_PEDIDO_OSD_CSV_OREGON: pedidocsv-osd-prd-us-west-2
-      LAMBDA_REQUEST_VALIDATOR: oauth2-proddrp-lambdaAuthorizer
+      AWS_TABLE_AGENDA: test-table-agenda
+      QUEUE_NAME_CITA_CSV: test-cita-queue
+      S3_NAME_CITA_CSV: citacsv-test
+      S3_NAME_CITA_CSV_VIRGINIA: citacsv-test-us-east-1
+      S3_NAME_CITA_CSV_OREGON: citacsv-test-us-west-2
+      LAMBDA_REQUEST_VALIDATOR: oauth2-qadrp-lambdaAuthorizer
       LAMBDA_REQUEST_VALIDATOR_RESULT_TTL: 0
 provider:
   name: aws
@@ -115,8 +113,7 @@ provider:
         - "dynamodb:DescribeTable"
         - "dynamodb:BatchWrite*"
       Resource:
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_PEDIDO_OSD}"
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_CONFIGURACION_OSD}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.settings.${self:custom.myStage}.AWS_TABLE_AGENDA}"
     - Effect: "Allow"
       Action:
         - "sqs:SendMessage"
@@ -124,8 +121,8 @@ provider:
         - "sqs:ReceiveMessage"
         - "sqs:DeleteMessage"
         - "sqs:GetQueueAttributes"
-      Resource:
-        - "arn:aws:sqs:${self:provider.region}:*:${self:custom.settings.${self:custom.myStage}.QUEUE_NAME_PEDIDO_OSD_CSV}"
+      Resource:        
+        - "arn:aws:sqs:${self:provider.region}:*:${self:custom.settings.${self:custom.myStage}.QUEUE_NAME_CITA_CSV}"        
     - Effect: "Allow"
       Action:
         - "s3:ListBucket"
@@ -133,36 +130,21 @@ provider:
         - "s3:PutObject"
         - "s3:DeleteObject"
       Resource:
-        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_PEDIDO_OSD_CSV_VIRGINIA}"
-        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_PEDIDO_OSD_CSV_OREGON}"
-        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_PEDIDO_OSD_CSV_VIRGINIA}/*"
-        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_PEDIDO_OSD_CSV_OREGON}/*"        
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CITA_CSV_VIRGINIA}"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CITA_CSV_OREGON}"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CITA_CSV_VIRGINIA}/*"
+        - "arn:aws:s3:::${self:custom.settings.${self:custom.myStage}.S3_NAME_CITA_CSV_OREGON}/*"
 
   vpc:
       securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}.${self:provider.region}}
       subnetIds: ${self:custom.subnets.${self:custom.myStage}.${self:provider.region}}
-functions:  
-  getHelloWorldHandler:
-    handler: handlers/hola-mundo.handler
+functions: 
+  postRegCita:
+    handler: handlers/generate-appointment.handler
     timeout: 25
     events:
       - http:
-          path: /holamundo
-          method: get
-          cors:
-            origin: "*"
-          authorizer:
-            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
-            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
-            type: request
-            identitySource: method.request.header.Authorization         
-    logRetentionInDays: 14
-  getClientDocNodeOsd:
-    handler: handlers/search-client.handler
-    timeout: 25
-    events:
-      - http:
-          path: /documento
+          path: /cita
           method: post
           cors:
             origin: "*"
@@ -172,12 +154,12 @@ functions:
             type: request
             identitySource: method.request.header.Authorization         
     logRetentionInDays: 14
-  getPedidoNodeOsd:
-    handler: handlers/search-pedido.handler
+  postGetCitas:
+    handler: handlers/get-citas.handler
     timeout: 25
     events:
       - http:
-          path: /consulta
+          path: /citas
           method: post
           cors:
             origin: "*"
@@ -186,96 +168,11 @@ functions:
             resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
             type: request
             identitySource: method.request.header.Authorization         
-    logRetentionInDays: 14
-  postRegDocClienteNodeOsd:
-    handler: handlers/create-customer.handler
-    timeout: 25
-    events:
-      - http:
-          path: /cliente
-          method: post
-          cors:
-            origin: "*"
-          authorizer:
-            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
-            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
-            type: request
-            identitySource: method.request.header.Authorization         
-    logRetentionInDays: 14
-  postRegPedidoNodeOsd:
-    handler: handlers/create-pedido.handler
-    timeout: 25
-    events:
-      - http:
-          path: /pedido
-          method: post
-          cors:
-            origin: "*"
-          authorizer:
-            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
-            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
-            type: request
-            identitySource: method.request.header.Authorization         
-    logRetentionInDays: 14
-  postRegConfigOsdNodeOsd:
-    handler: handlers/create-config-osd.handler
-    timeout: 25
-    events:
-      - http:
-          path: /config
-          method: post
-          cors:
-            origin: "*"
-          authorizer:
-            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
-            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
-            type: request
-            identitySource: method.request.header.Authorization         
-    logRetentionInDays: 14
-  postRegEstadoListaPedido:
-    handler: handlers/update-estado-transaccion.handler
-    timeout: 25
-    events:
-      - http:
-          path: /depurar
-          method: post
-          cors:
-            origin: "*"
-          authorizer:
-            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
-            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
-            type: request
-            identitySource: method.request.header.Authorization         
-    logRetentionInDays: 14
-  postSearchConfigNodeOsd:
-    handler: handlers/search-config-osd.handler
-    timeout: 25
-    events:
-      - http:
-          path: /getconfig
-          method: post
-          cors:
-            origin: "*"
-          authorizer:
-            arn: "arn:aws:lambda:${self:provider.region}:#{AWS::AccountId}:function:${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR}"
-            resultTtlInSeconds: "${self:custom.settings.${self:custom.myStage}.LAMBDA_REQUEST_VALIDATOR_RESULT_TTL}"
-            type: request
-            identitySource: method.request.header.Authorization
-    logRetentionInDays: 14 
-  generaClienteCsvNodeOsd:
-    handler: handlers/sqs-create-customer.handler
-    vpc:
-      securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}.${self:provider.region}}
-      subnetIds: ${self:custom.subnets.${self:custom.myStage}.${self:provider.region}}
-  generaPedidoCsvNodeOsd:
-    handler: handlers/sqs-create-pedido.handler
-    vpc:
-      securityGroupIds: ${self:custom.securitygroups.${self:custom.myStage}.${self:provider.region}}
-      subnetIds: ${self:custom.subnets.${self:custom.myStage}.${self:provider.region}}
+    logRetentionInDays: 14  
 resources:
   Resources:
     #Create SQS 
     Queuengrclientecsv:
       Type: "AWS::SQS::Queue"
       Properties:
-        QueueName: ${self:custom.settings.${self:custom.myStage}.QUEUE_NAME_PEDIDO_OSD_CSV}
+        QueueName: ${self:custom.settings.${self:custom.myStage}.QUEUE_NAME_CITA_CSV}
