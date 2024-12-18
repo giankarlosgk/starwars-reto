@@ -1,4 +1,4 @@
-service: sls-ngr-api-lambda-node-osd
+service: sls-starwars-api-lambda-node-osd
 plugins:
   - serverless-domain-manager
   - serverless-pseudo-parameters
